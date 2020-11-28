@@ -17,11 +17,11 @@ connection.once("open", () => {
   console.log("MongoDB database connection enstablished succcessfully");
 });
 
-const visitorsRouter = require("./routes/visitors");
-const usersRouter = require("./routes/users");
+const booksRouter = require("./routes/Books");
+const authorsRouter = require("./routes/Author");
 
-app.use("/visitors", visitorsRouter);
-app.use("/users", usersRouter);
+app.use("/books", booksRouter);
+app.use("/authors", authorsRouter);
 
 app.listen(port, function () {
   console.log(`CORS-enabled web server listening on port: ${port}`);
