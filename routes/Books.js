@@ -1,5 +1,30 @@
 const router = require("express").Router();
 let Book = require("../models/BookModel");
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination:function(req, file, cb){
+    cb(null, './uploads/');
+  },
+  filename:function(req, file, cb){
+    cb(null, file.originalname);
+  }
+});
+
+const fileFIlter = (req, file,cb) => {
+  if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+    cb(null, true);
+  }
+  else{
+    cb(null, false);
+  }
+  
+  
+}
+
+const upload = multer({storage:storage, limits:{
+  fileSize: 1024 * 1024 * 2
+}}); 
 
 router.route("/").get((req, res) => {
   Book.find()
@@ -7,17 +32,20 @@ router.route("/").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route("/add").post((req, res) => {
+router.route("/add").post(upload.single('cover'), (req, res) => {
+  console.log(req.file);
   const name = req.body.name;
   const author = req.body.author;
   const price = req.body.price;
   const summary = req.body.summary;
+  const cover = req.file.path;
 
   const newBook = new Book({
     name,
     author,
     price,
-    summary
+    summary,
+    cover
   });
 
   newBook
