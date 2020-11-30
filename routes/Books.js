@@ -18,8 +18,6 @@ const fileFIlter = (req, file,cb) => {
   else{
     cb(null, false);
   }
-  
-  
 }
 
 const upload = multer({storage:storage, limits:{
@@ -66,13 +64,14 @@ router.route("/:id").delete((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route("/update/:id").post((req, res) => {
+router.route("/update/:id").post(upload.single('cover'),(req, res) => {
   Book.findById(req.params.id)
     .then((book) => {
-      book.username = req.body.username;
-      book.description = req.body.description;
-      book.duration = Number(req.body.duration);
-      book.date = Date.parse(req.body.date);
+      book.name = req.body.name;
+      book.author = req.body.author;
+      book.price = req.body.price;
+      book.summary = req.body.summary;
+      book.cover = req.file.path;
 
       book
         .save()
