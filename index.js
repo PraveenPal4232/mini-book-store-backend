@@ -20,10 +20,10 @@ connection.once("open", () => {
 });
 
 const booksRouter = require("./routes/Books");
-const usersRouter = require("./routes/Users");
+const authorsRouter = require("./routes/Author");
 
 app.use("/books", booksRouter);
-app.use("/users", usersRouter);
+app.use("/authors", authorsRouter);
 
 app.listen(port, function () {
   console.log(`CORS-enabled web server listening on port: ${port}`);

@@ -31,7 +31,7 @@ router.route("/").get((req, res) => {
 });
 
 router.route("/add").post(upload.single('cover'), (req, res) => {
-  // console.log(req.file);
+  console.log(req.file);
   const name = req.body.name;
   const author = req.body.author;
   const price = req.body.price;
