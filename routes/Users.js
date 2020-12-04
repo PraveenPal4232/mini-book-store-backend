@@ -2,8 +2,30 @@ const router = require("express").Router();
 let User = require("../models/UserModel");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
 require('dotenv').config({ path: '../.env' })
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination:function(req, file, cb){
+    cb(null, './uploads/users');
+  },
+  filename:function(req, file, cb){
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({storage:storage, limits:{
+  fileSize: 1024 * 1024 * 2
+}}); 
+
+const fileFIlter = (req, file,cb) => {
+  if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+    cb(null, true);
+  }
+  else{
+    cb(null, false);
+  }
+}
 
 router.route("/").get((req, res) => {
   User.find()
@@ -11,7 +33,7 @@ router.route("/").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route("/register").post((req, res) => {
+router.route("/register").post(upload.single('profile'), (req, res) => {
   User.find({email:req.body.email})
   .exec()
   .then(user => {
@@ -32,8 +54,10 @@ router.route("/register").post((req, res) => {
           const email = req.body.email;
           const password = hash;
           const bio = req.body.bio;
-          const profile = req.body.profile;
+          const profile = req.file.path;
           const isAuthor = req.body.isAuthor;
+          const myBooks = req.body.myBooks;
+          const wishlist = req.body.wishlist;
     
           const newUser = new User({
             name,
@@ -41,7 +65,9 @@ router.route("/register").post((req, res) => {
             password,
             bio,
             profile,
-            isAuthor
+            isAuthor,
+            myBooks,
+            wishlist
           });
         
           newUser

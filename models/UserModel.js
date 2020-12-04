@@ -8,7 +8,9 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     bio: { type: String, required: true },
     profile: { type: String, required: true },
-    isAuthor: { type: Boolean, required: true }
+    isAuthor: { type: Boolean, required: true },
+    myBooks:{ type: Array },
+    wishlist:{ type: Array }
   },
   {
     timestamps: true,
