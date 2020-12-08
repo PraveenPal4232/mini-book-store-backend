@@ -1,6 +1,7 @@
 const router = require("express").Router();
 let Book = require("../models/BookModel");
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth');
 
 const storage = multer.diskStorage({
   destination:function(req, file, cb){
@@ -64,7 +65,7 @@ router.route("/:id").delete((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-router.route("/update/:id").post(upload.single('cover'),(req, res) => {
+router.route("/update/:id").post( checkAuth, upload.single('cover'), (req, res) => {
   Book.findById(req.params.id)
     .then((book) => {
       book.name = req.body.name;
