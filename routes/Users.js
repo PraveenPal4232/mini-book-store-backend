@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' })
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth');
 
 const storage = multer.diskStorage({
   destination:function(req, file, cb){
@@ -117,6 +118,35 @@ router.route("/register").post(upload.single('profile'), (req, res) => {
       })
       .catch((err) => res.status(400).json("Error: " + err));
   });
+
+  router.route("/update/:id").post( checkAuth, upload.single('profile'), (req, res) => {
+    User.findById(req.params.id)
+    .then(user => {
+      bcrypt.hash(req.body.password, 10, (err, hash) => {
+        if(err){
+          return res.status(500).json({
+            error:err
+          });
+        }
+        else{
+          user.name = req.body.name;
+          user.email = req.body.email;
+          user.password = hash;
+          user.bio = req.body.bio;
+          user.profile = req.file.path;
+          user.isAuthor = req.body.isAuthor;
+          user.myBooks = req.body.myBooks;
+          user.wishlist = req.body.wishlist;
+
+          user
+            .save()
+            .then(() => res.json("User Updated!"))
+            .catch((err) => res.status(400).json("Error: " + err));
+        }
+    
+        });
+    });
+    });
 
   router.route("/:id").get((req, res) => {
     User.findById(req.params.id)
