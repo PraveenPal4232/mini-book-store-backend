@@ -161,5 +161,4 @@ router.route("/register").post(upload.single('profile'), (req, res) => {
   });
   
 
-
 module.exports = router;
