@@ -107,8 +107,10 @@ router.route("/register").post(upload.single('profile'), (req, res) => {
               expiresIn:"1h"
             });
             return res.status(200).json({
-              message:'Auth successful',
-              token:token
+              token:token,
+              id:user[0]._id,
+              isAuthor:user[0].isAuthor
+
             });
           }
           res.status(401).json({
@@ -147,6 +149,20 @@ router.route("/register").post(upload.single('profile'), (req, res) => {
         });
     });
     });
+
+    router.route("/wishlist/:id").put( checkAuth, upload.single('profile'), (req, res) => {
+      User.findById(req.params.id)
+      .then(user => {
+
+      user.wishlist = req.body.wishlist;
+  
+            user
+              .save()
+              .then(() => res.json("Wishlist Updated!"))
+              .catch((err) => res.status(400).json("Error: " + err));
+
+          });
+      });
 
   router.route("/:id").get((req, res) => {
     User.findById(req.params.id)
